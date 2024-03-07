@@ -11,6 +11,7 @@
 		43801AAF2B98B9860028D7EA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43801AAE2B98B9860028D7EA /* ContentView.swift */; };
 		43801AB12B98B9880028D7EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 43801AB02B98B9880028D7EA /* Assets.xcassets */; };
 		43801AB42B98B9880028D7EA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 43801AB32B98B9880028D7EA /* Preview Assets.xcassets */; };
+		43801ABC2B996EF20028D7EA /* TReplaceStrWid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43801ABB2B996EF20028D7EA /* TReplaceStrWid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		43801AB02B98B9880028D7EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		43801AB32B98B9880028D7EA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		43801AB52B98B9880028D7EA /* SrcManipulate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SrcManipulate.entitlements; sourceTree = "<group>"; };
+		43801ABB2B996EF20028D7EA /* TReplaceStrWid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TReplaceStrWid.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 			children = (
 				43801AAC2B98B9860028D7EA /* SrcManipulateApp.swift */,
 				43801AAE2B98B9860028D7EA /* ContentView.swift */,
+				43801ABB2B996EF20028D7EA /* TReplaceStrWid.swift */,
 				43801AB02B98B9880028D7EA /* Assets.xcassets */,
 				43801AB52B98B9880028D7EA /* SrcManipulate.entitlements */,
 				43801AB22B98B9880028D7EA /* Preview Content */,
@@ -139,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43801ABC2B996EF20028D7EA /* TReplaceStrWid.swift in Sources */,
 				43801AAF2B98B9860028D7EA /* ContentView.swift in Sources */,
 				43801AAD2B98B9860028D7EA /* SrcManipulateApp.swift in Sources */,
 			);
@@ -279,6 +283,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -306,6 +311,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
