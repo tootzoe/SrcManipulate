@@ -38,8 +38,28 @@ struct TReplaceStrWid: View {
                                 ).labelStyle(.iconOnly)
                             }.frame( height: 24)
                             
-                            TextField("Source string", text: $replaceStrLs[idx][0])
-                            TextField("Replace with", text: $replaceStrLs[idx][1])
+                            if replaceStrLs[idx][0] == " "{
+                                Text("(space)" )
+                                Text("-->")
+                                TextField("(empty string)", text: $replaceStrLs[idx][1])
+                            }else  if replaceStrLs[idx][0] == "\t"{
+                                Text("\\t" )
+                                Text("-->")
+                                TextField("(empty string)", text: $replaceStrLs[idx][1])
+                            }else  if replaceStrLs[idx][0] == "\r"{
+                                Text("\\r" )
+                                Text("-->")
+                                TextField("(empty string)", text: $replaceStrLs[idx][1])
+                            }else if replaceStrLs[idx][0] == "\n"{
+                                Text("\\n" )
+                                Text("-->")
+                                TextField("(empty string)", text: $replaceStrLs[idx][1])
+                            }else{
+                                
+                                TextField("Source string", text: $replaceStrLs[idx][0])
+                                Text("-->")
+                                TextField("Replace with", text: $replaceStrLs[idx][1])
+                            }
                         }
                     }
                 }
@@ -48,7 +68,7 @@ struct TReplaceStrWid: View {
                 
             HStack {
                 Button {
-                    replaceStrLs = [["\n",""],["\\",""]]
+                    replaceStrLs = ContentView.initReplaingStrLs  
                     } label: {
                         Label(
                             title: { Text("Reset")  },

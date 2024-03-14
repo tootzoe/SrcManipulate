@@ -10,12 +10,16 @@
 //
 
 
-
+import Foundation
 import SwiftUI
  
  
 
 struct ContentView: View {
+    
+    static var initReplaingStrLs : [[String]] {
+        [["\n",""],["\r",""],["\t",""],["\\",""]]
+    }
     
     @State private var srcTeStr :String  = ""
     @State private var rslTeStr :String  = ""
@@ -37,53 +41,28 @@ struct ContentView: View {
     @State private var isForceOverride = true
     @State private var isNewLineForSeparator = false
     
-    @State private var replaceStrLs = [["\n",""],["\\",""]]
+    @State private var replaceStrLs = initReplaingStrLs // [["\n",""],["\r",""],["\t",""],["\\",""]]
     
-    @State private var cpBtnTitle = "Copy Result"
+    @State private var cpBtnTitle = "Copy Result String"
     
+    enum TSpliterChar : String , CaseIterable , Identifiable {
+        var id : String { rawValue }
+        
+    case space = " "
+    case tab   = "\t"
+    case nextline   = "\n"
+    case enter   = "\r"
+    case customer = ""
+         
+    }
+    
+    @State private var currSC  = TSpliterChar.space
   
     
     var body: some View {
         ScrollView {
             VStack {
-                HStack{
-                    
-                    LabeledContent {
-                        TextField(text: $spliterTeStr) {
-                            Text("")
-                        }
-                        .frame(maxWidth: 32)
-                        .disabled(isNewLineForSeparator)
-                        .onChange(of: spliterTeStr) { _, str in
-                            spliterStr  = str
-                            if spliterStr.isEmpty {
-                                spliterStr = " "
-                            }
-                            handleSrcStr(srcTeStr)
-                        }
-                    } label: {
-                        Text("Custom Separator")
-                    }
-                    
-                    Toggle(isOn: $isNewLineForSeparator)
-                    {
-                        Text("'\\n'(new line) for Separator")
-                    }
-                       .toggleStyle(.checkbox)
-                       .onChange(of: isNewLineForSeparator) { _, b in
-                           
-                           if b {
-                               spliterStr = "\n"
-                           }else {
-                               spliterStr = spliterTeStr
-                               if spliterStr.isEmpty { spliterStr = " "}
-                           }
-                           handleSrcStr(srcTeStr)
-                       }
-                    
-                    Spacer()
-
-                }
+               
                 
                 GroupBox {
                     HStack {
@@ -123,7 +102,78 @@ struct ContentView: View {
                         }
                     }
                 } label: {
-                    Text("Orignal String")
+                    Text("Original String")
+                    //  Text("Original source file names")Text("Cleaned file names")
+                }
+                
+                HStack{
+                    Picker("String Spliter" , selection: $currSC){
+                        ForEach(TSpliterChar.allCases) { c in
+                            
+                                Text(String(describing: c)   )
+                                .tag(c)
+                            
+                        }
+                    }
+                    .frame(maxWidth: 500)
+                    .pickerStyle(.segmented)
+                        .onChange(of: currSC) { ochar , _ in
+                            spliterStr = currSC.rawValue
+                            if currSC == .customer {
+                                spliterStr = TSpliterChar.space.rawValue
+                            }
+                            
+                         
+                            replaceStrLs.removeAll { $0[0] == spliterStr || $0[0].isEmpty  }
+                             
+                            if !ochar.rawValue.isEmpty {
+                                replaceStrLs.append([ochar.rawValue ,""])
+                            }
+                            
+                            handleSrcStr(srcTeStr)
+                        }
+                    
+ 
+                        TextField(text: $spliterTeStr) {
+                            Text("Custom Separator")
+                        }
+                        .frame(maxWidth: 32)
+                        .disabled(currSC != .customer )
+                        .onChange(of: spliterTeStr) { _, str in
+                            spliterStr  = str
+ 
+                            handleSrcStr(srcTeStr)
+                            
+                        }
+ 
+                 
+        
+                    Text("Current Spliter (hex) 0x\(spliterStr.hexStr.uppercased())")
+                  
+                    
+                    
+                    
+//                    Toggle(isOn: $isNewLineForSeparator)
+//                    {
+//                        Text("'\\n'(new line) for Separator")
+//                    }
+//                       .toggleStyle(.checkbox)
+//                       .onChange(of: isNewLineForSeparator) { _, b in
+//                           print(spliterStr)
+////                           if b {
+////                               spliterStr = "\n"
+////                           }else {
+////                               spliterStr = spliterTeStr
+////                               if spliterStr.isEmpty { spliterStr = " "}
+////                           }
+////                           handleSrcStr(srcTeStr)
+//                       }
+                    
+                     
+                    
+                    
+                    Spacer()
+
                 }
             
                     
@@ -136,7 +186,7 @@ struct ContentView: View {
                             handleSrcStr(srcTeStr)
                         }
                     } label: {
-                        Text("Prefix:")
+                        Text("Appending Prefix:")
                     }
                     
                     
@@ -147,7 +197,7 @@ struct ContentView: View {
                             handleSrcStr(srcTeStr)
                         }
                     } label: {
-                        Text("Suffix:")
+                        Text("Appending Suffix:")
                     }
 
                 }
@@ -156,8 +206,17 @@ struct ContentView: View {
                 Text("We only have permission in ~/Downloads folder, so move files(folders) here before coping....")
                 
                 HStack {
-                   Text("Source Folder:")
-                    Text(srcFolderPath).frame(maxWidth: .infinity, alignment: .leading )
+                   
+//                    Text(srcFolderPath).frame(maxWidth: .infinity, alignment: .leading )
+                    
+                    LabeledContent {
+                        TextField(text:$srcFolderPath){
+                            Text("Copy from Folder:")
+                        }
+                    } label: {
+                        Text("Copy from Folder:")
+                    }
+
                          
                     Button("Select"){
                       let op =  NSOpenPanel()
@@ -178,8 +237,17 @@ struct ContentView: View {
                  
                 
                 HStack {
-                   Text("Distance Folder:")
-                    Text (dstFolderPath ).frame(maxWidth: .infinity, alignment: .leading )
+//                   Text("Distance Folder:")
+//                    Text (dstFolderPath ).frame(maxWidth: .infinity, alignment: .leading )
+                    
+                    LabeledContent {
+                        TextField(text:$dstFolderPath){
+                            Text("Copy to Folder:")
+                        }
+                    } label: {
+                        Text("Copy to Folder:")
+                    }
+                    
                         
                     Button("Select"){
                       let op =  NSOpenPanel()
@@ -219,15 +287,17 @@ struct ContentView: View {
 
                     
                     Button("Do Copy files") {
-                        Task {
-                            await  MainActor.run {
-                                   doCopyFiles(srcTeStr)
-                            }
+                        DispatchQueue.global(qos: .default).async {
+                            doCopyFiles(rslTeStr)
                         }
+                           
+                                   
+                           
+                        
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.brown)
-                    .disabled( srcFolderPath.isEmpty || dstFolderPath.isEmpty || srcFolderPath == dstFolderPath  )
+                   // .disabled( srcFolderPath.isEmpty || dstFolderPath.isEmpty || srcFolderPath == dstFolderPath  )
                     
                     Spacer()
                     
@@ -240,7 +310,7 @@ struct ContentView: View {
                         
                         Task{
                           try await   Task.sleep(nanoseconds:2000_000_000)
-                            cpBtnTitle = "Copy Result"
+                            cpBtnTitle = "Copy Result String"
                         }
                         
                     }
@@ -275,11 +345,10 @@ struct ContentView: View {
             .padding()
         }
         .task  {
-            Task {
-                try await Task.sleep(nanoseconds: 600_000_000)
-                    dstFolderPath = URL.userHomePath + "/Downloads/"
-                    srcFolderPath = URL.userHomePath + "/Downloads/"
-            }
+                    
+                    srcFolderPath =   URL.userHomePath
+            dstFolderPath =    URL.userHomePath
+            
         }
         
         
@@ -290,9 +359,13 @@ struct ContentView: View {
         var str = str0
         
         replaceStrLs.forEach{  strLs  in
-            if strLs.first?.isEmpty != true {
-                str.replace(strLs.first!, with: strLs.last!)
+            if let keyStr = strLs.first , keyStr != spliterStr {
+                str = str.replacingOccurrences(of: keyStr, with: strLs.last!)
             }
+            
+//            if strLs.first?.isEmpty != true {
+//                str = str.replacingOccurrences(of: strLs.first!, with: strLs.last!)
+//            }
         }
         
         let rslStr =   str.split(separator: spliterStr, omittingEmptySubsequences: true).filter{ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }  .map { s in
@@ -305,55 +378,94 @@ struct ContentView: View {
     }
     
     func doCopyFiles(_ str : String)   {
-        let rslStr =   str.split(separator: spliterStr, omittingEmptySubsequences: true)
-        
-        let srcPathnameLs = rslStr.map { srcFolderPath + $0   }
+        let rslStr =   str.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\\", with: "").split(separator: "\n")
         
         rslTeStr = ""
-         
-        for i in srcPathnameLs.enumerated() {
-            
-            var hdFn = ""
-            let tmpUrl = URL(string: i.element)
-         
-                if let fn = tmpUrl?.deletingPathExtension().absoluteString {
-                    hdFn = fn + ".h"
-                    
-                    if  !FileManager.default.fileExists(atPath: URL.init(string:  hdFn)!.absoluteString) {
-                        hdFn = ""
-                }
-            }
-            
-            if !isCpHeader {
-                hdFn = ""
-            }
-           
-            
-            var cmdStr = "cp \(isForceOverride ? "-f " : "")\(i.element) \(dstFolderPath)"
-            if !hdFn.isEmpty {
-                cmdStr.append(";cp \(isForceOverride ? "-f " : "")\(hdFn) \(dstFolderPath)")
-            }
-         //  print(cmdStr)
-            
-            rslTeStr.append(cmdStr)
-            rslTeStr.append("\n")
-              
-            let task = Process()
-            task.launchPath = "/bin/zsh"
-             task.arguments = ["-c",  cmdStr]
+       // print(rslStr)
  
-            let pipe = Pipe()
-            task.standardOutput = pipe
-            task.standardError = pipe
-            task.launch()
+        for s in rslStr {
             
-              if let  data = try?  pipe.fileHandleForReading.readToEnd(){
-                if let rslStr0 = String(data: data , encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) {
-                         rslTeStr.append(rslStr0)
-                        rslTeStr.append("\n\n")
+            let srcBase = URL.init(filePath: srcFolderPath)
+            let dstBase = URL.init(filePath: dstFolderPath)
+            let srcFile = srcBase.appendingPathComponent( String(s), conformingTo: .text)
+            let dstFile = dstBase.appendingPathComponent( String(s), conformingTo: .text)
+              
+         
+            
+                let b =   FileManager.default.fileExists(atPath:  srcFile.path())
+                var  hdFn = ""
+                if b {
+                     createInterPathfolder(dstFile)
+                    
+                    let fext = srcFile.pathExtension.lowercased()
+                    if  isCpHeader &&  (fext == "c" || fext == "cpp") {
+                        let u = srcFile.deletingPathExtension().appendingPathExtension("h")
+                        if FileManager.default.fileExists(atPath:  u.path()){
+                           // print("have header: " , u)
+                            hdFn = u.path()
+                        }
+                    }
+                      
+                    let dstFolder =  dstFile.deletingLastPathComponent().path()
+                    var cmdStr = "cp \(isForceOverride ? "-f " : "")\(srcFile.path()) \(dstFolder)"
+                    if !hdFn.isEmpty {
+                        cmdStr.append(";cp \(isForceOverride ? "-f " : "")\(hdFn) \(dstFolder)")
+                    }
+                    
+                    var tmpCmdStr = cmdStr + "\n"
+                     
+                    let task = Process()
+                    task.launchPath = "/bin/zsh"
+                     task.arguments = ["-c",  cmdStr]
+         
+                    let pipe = Pipe()
+                    task.standardOutput = pipe
+                    task.standardError = pipe
+                    task.launch()
+                    
+                      if let  data = try?  pipe.fileHandleForReading.readToEnd(){
+                        if let rslStr0 = String(data: data , encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) {
+                            tmpCmdStr.append(rslStr0)
+                            tmpCmdStr.append("\n\n")
+                            
+                        }
+                    }
+                    
+                    DispatchQueue.main.async {
+                        rslTeStr.append(tmpCmdStr)
+                    }
                 }
+        }
+ 
+    }
+    
+    
+    private func createInterPathfolder(_ dstPathFile: URL) {
+        var tmpFUrl = dstPathFile
+        tmpFUrl . deleteLastPathComponent()
+        // print(tmpFUrl.path())
+        
+        if !FileManager.default.fileExists(atPath: tmpFUrl.path()) {
+            do {
+                try   FileManager.default.createDirectory(at:   tmpFUrl  , withIntermediateDirectories: true )
+            }catch{
+                fatalError(error.localizedDescription)
             }
         }
+    }
+    
+    
+}
+
+public extension String {
+    var hexStr : String {
+        Data(self.utf8).hexDescription
+    }
+}
+
+public extension Data {
+    var hexDescription: String {
+        return reduce("") {$0 + String(format: "%02x", $1)}
     }
 }
 
